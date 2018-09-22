@@ -66,7 +66,7 @@ class Transaction(Base):
 
     id = Column(String(64), primary_key=True, nullable=False, default=generate_uuid)
     type = Column(String(16), nullable=False, default='CREDIT')
-    description = Column(String(255), nullable=False, default='')
+    description = Column(String(255), nullable=False, default='RECEIVE_MONEY')
     amount = Column(Numeric(28, 4), default='0.0000')
     balance = Column(Numeric(28, 4), default='0.0000')
     created_date = Column(DateTime, nullable=False, default=datetime.utcnow)
