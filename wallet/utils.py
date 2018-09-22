@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 JWT_SECRET_KEY = 'Bs0PzP3VV5pHtaE4M4nJblvnVphq6oVS'
 JWT_ALGO = 'HS256'
+JWT_EXPIRATION_HOURS = 1
 
 def generate_uuid():
     return str(uuid.uuid4())
@@ -30,7 +31,7 @@ def verify_password(password, hashed):
 def generate_session_token(account_id):
     payload = {
         'account_id': account_id,
-        'exp': datetime.utcnow() + timedelta(hours=1)
+        'exp': datetime.utcnow() + timedelta(hours=JWT_EXPIRATION_HOURS)
     }
 
     return jwt.encode(payload, JWT_SECRET_KEY,  algorithm=JWT_ALGO).decode()
