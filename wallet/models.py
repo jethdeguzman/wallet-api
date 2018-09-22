@@ -65,7 +65,7 @@ class Transaction(Base):
     __tablename__ = 'transactions'
 
     id = Column(String(64), primary_key=True, nullable=False, default=generate_uuid)
-    type = Column(String(16), nullable=False, default='SEND')
+    type = Column(String(16), nullable=False, default='CREDIT')
     description = Column(String(255), nullable=False, default='')
     amount = Column(Numeric(28, 4), default='0.0000')
     balance = Column(Numeric(28, 4), default='0.0000')
