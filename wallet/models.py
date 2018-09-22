@@ -5,10 +5,7 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, validates, relationship
 from sqlite3 import Connection as SQLite3Connection
-from .utils import generate_uuid, encrypt_password, get_wallets_sql_statement
-
-DEFAULT_PAGE = 1
-PAGE_LIMIT = 10
+from .utils import generate_uuid, encrypt_password, get_wallets_sql_statement, get_transactions_sql_statement
 
 engine = create_engine('sqlite:///wallet.db', echo=True)
 Session = sessionmaker(bind=engine)
@@ -68,7 +65,7 @@ class Transaction(Base):
     __tablename__ = 'transactions'
 
     id = Column(String(64), primary_key=True, nullable=False, default=generate_uuid)
-    type = Column(String(16), nullable=False, default='CREDIT')
+    type = Column(String(16), nullable=False, default='SEND')
     description = Column(String(255), nullable=False, default='')
     amount = Column(Numeric(28, 4), default='0.0000')
     balance = Column(Numeric(28, 4), default='0.0000')
@@ -102,4 +99,8 @@ def create_wallet(session, account_id=None, currency=None):
 
 def get_wallets(filters):
     statement = get_wallets_sql_statement(filters=filters)
+    return fetch_data(statement, params=filters)
+
+def get_transactions(filters):
+    statement = get_transactions_sql_statement(filters=filters)
     return fetch_data(statement, params=filters)

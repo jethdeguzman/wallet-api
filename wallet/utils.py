@@ -62,3 +62,27 @@ def get_wallets_sql_statement(filters={}):
         ") t1 on t1.wallet_id = w.id %s "
         "order by w.created_date desc; "
     ) % (where_clause)
+
+
+def get_transactions_sql_statement(filters={}):
+    column_map = {'account_id': 'w.account_id', 'wallet_id': 't.wallet_id', 'type': 't.type'}
+    filter_statement = ' and '.join(["%s = :%s" % (column_map[k], k) for k, v in filters.items()])
+    where_clause = 'where %s' % filter_statement if len(filter_statement) > 0 else ''
+    return (
+        "select "
+            "t.id, "
+            "t.type, "
+            "t.description, "
+            "t.amount, "
+            "t.created_date, "
+            "t.balance, "
+            "t.wallet_id, "
+            "w.currency, "
+            "w.account_id "
+        "from "
+            "transactions t "
+        "left join "
+            "wallets w "
+        "on w.id = t.wallet_id %s "
+        "order by t.created_date desc;"
+    ) % (where_clause)
