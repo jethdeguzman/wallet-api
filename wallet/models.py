@@ -1,11 +1,14 @@
 from datetime import datetime
 from .exceptions import ValidationError
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime, Numeric, event
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime, Numeric, event, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, validates, relationship
 from sqlite3 import Connection as SQLite3Connection
-from .utils import generate_uuid, encrypt_password
+from .utils import generate_uuid, encrypt_password, get_wallets_sql_statement
+
+DEFAULT_PAGE = 1
+PAGE_LIMIT = 10
 
 engine = create_engine('sqlite:///wallet.db', echo=True)
 Session = sessionmaker(bind=engine)
@@ -23,6 +26,12 @@ def validate_required_str(key, value):
         return value
 
     raise ValidationError(key)
+
+def fetch_data(statement, params={}):
+    with engine.connect() as connection:
+        result = connection.execution_options(stream_results=True).execute(text(statement), **params).fetchall()
+        connection.close()
+        return result
 
 class Account(Base):
     __tablename__ = 'accounts'
@@ -90,3 +99,7 @@ def create_wallet(session, account_id=None, currency=None):
     session.add(wallet)
     session.commit()
     return wallet
+
+def get_wallets(filters):
+    statement = get_wallets_sql_statement(filters=filters)
+    return fetch_data(statement, params=filters)

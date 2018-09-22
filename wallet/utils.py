@@ -34,3 +34,31 @@ def generate_session_token(account_id):
     }
 
     return jwt.encode(payload, JWT_SECRET_KEY,  algorithm=JWT_ALGO).decode()
+
+def get_wallets_sql_statement(filters={}):
+    column_map = {'id': 'w.id', 'account_id': 'w.account_id'}
+    filter_statement = ' and '.join(["%s = :%s" % (column_map[k], k) for k, v in filters.items()])
+    where_clause = 'where %s' % filter_statement if len(filter_statement) > 0 else ''
+    
+    return (
+        "select "
+            "w.id, "
+            "w.account_id, "
+            "w.currency, "
+            "w.created_date, "
+            "coalesce(t1.balance, 0.0000) as balance "
+        "from "
+            "wallets w "
+        "left join ( "
+            "select "
+                "t.wallet_id, "
+                "t.balance "
+            "from "
+                "transactions t "
+            "order by "
+                "t.wallet_id, "
+                "t.created_date desc "
+            "limit 1 "
+        ") t1 on t1.wallet_id = w.id %s "
+        "order by w.created_date desc; "
+    ) % (where_clause)
