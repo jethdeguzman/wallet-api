@@ -1,8 +1,8 @@
-from .base import BaseRequest
+from .base import LoginRequiredRequest
 from ..exceptions import ValidationError, RecordNotFound
 from ..models import create_wallet, get_wallets
 
-class CreateWalletRequest(BaseRequest):
+class CreateWalletRequest(LoginRequiredRequest):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.currency = kwargs.get('currency')
@@ -23,7 +23,7 @@ class CreateWalletRequest(BaseRequest):
         finally:
             self.db_session.close()
 
-class GetWalletsRequest(BaseRequest):
+class GetWalletsRequest(LoginRequiredRequest):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -41,7 +41,7 @@ class GetWalletsRequest(BaseRequest):
         finally:
             self.db_session.close()
 
-class GetWalletRequest(BaseRequest):
+class GetWalletRequest(LoginRequiredRequest):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.wallet_id = kwargs.get('wallet_id')

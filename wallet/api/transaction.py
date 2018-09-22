@@ -1,7 +1,7 @@
-from .base import BaseRequest
+from .base import LoginRequiredRequest
 from ..models import get_transactions
 
-class GetTransactionsRequest(BaseRequest):
+class GetTransactionsRequest(LoginRequiredRequest):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.wallet_id = kwargs.get('wallet_id')

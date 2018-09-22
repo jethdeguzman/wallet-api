@@ -28,3 +28,10 @@ class RecordNotFound(Exception):
 
     def __str__(self):
         return self.message
+
+class PermissionDenied(Exception):
+    def __init__(self):
+        self.message = 'Permission denied. Pleas login.'
+
+    def __str__(self):
+        return self.message
