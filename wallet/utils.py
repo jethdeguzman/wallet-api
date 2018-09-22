@@ -36,6 +36,12 @@ def generate_session_token(account_id):
 
     return jwt.encode(payload, JWT_SECRET_KEY,  algorithm=JWT_ALGO).decode()
 
+def decode_session_token(session_token):
+    try:
+        return jwt.decode(session_token, JWT_SECRET_KEY, algorithms=JWT_ALGO)
+    except jwt.ExpiredSignatureError:
+        raise
+
 def get_wallets_sql_statement(filters={}):
     column_map = {'id': 'w.id', 'account_id': 'w.account_id'}
     filter_statement = ' and '.join(["%s = :%s" % (column_map[k], k) for k, v in filters.items()])
