@@ -81,6 +81,7 @@ def get_transactions_sql_statement(filters={}):
             "t.type, "
             "t.description, "
             "t.amount, "
+            "t.related_transaction_id, "
             "t.created_date, "
             "t.balance, "
             "t.wallet_id, "

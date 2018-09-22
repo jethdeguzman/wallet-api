@@ -18,7 +18,8 @@ class GetTransactionsRequest(LoginRequiredRequest):
                 'type': transaction[1],
                 'description': transaction[2],
                 'amount': transaction[3],
-                'created_date': transaction[4],
+                'related_transaction_id': transaction[4],
+                'created_date': transaction[5],
             } for transaction in transactions]
        
         except:

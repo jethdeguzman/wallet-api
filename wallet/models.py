@@ -65,13 +65,15 @@ class Transaction(Base):
     __tablename__ = 'transactions'
 
     id = Column(String(64), primary_key=True, nullable=False, default=generate_uuid)
-    type = Column(String(16), nullable=False, default='CREDIT')
-    description = Column(String(255), nullable=False, default='RECEIVE_MONEY')
+    type = Column(String(16), nullable=False, default='CREDIT') #VALUES: CREDIT, DEBIT
+    description = Column(String(255), nullable=False, default='RECEIVE_MONEY') #VALUES: SEND_MONEY, RECEIVE_MONEY, DEPOSIT, WITHDRAWAL
     amount = Column(Numeric(28, 4), default='0.0000')
     balance = Column(Numeric(28, 4), default='0.0000')
     created_date = Column(DateTime, nullable=False, default=datetime.utcnow)
     wallet_id = Column(String(64), ForeignKey('wallets.id'))
     wallet = relationship('Wallet', backref='transactions')
+    related_transaction_id = Column(String(64), ForeignKey('transactions.id'))
+    related_transaction = relationship('Transaction', backref='related_transactions', remote_side='Transaction.id')
 
     def __repr__(self):
         return self.uuid
