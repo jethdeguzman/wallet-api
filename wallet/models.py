@@ -1,9 +1,9 @@
 from datetime import datetime
 from .exceptions import ValidationError
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, DateTime, Numeric
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, validates, relationship
-from .utils import generate_uuid
+from .utils import generate_uuid, encrypt_password
 
 engine = create_engine('sqlite:///wallet.db', echo=True)
 Session = sessionmaker(bind=engine)
@@ -65,3 +65,9 @@ class Transaction(Base):
         return self.uuid
 
 Base.metadata.create_all(engine)
+
+def create_account(session, username=None, password=None):
+    account = Account(username=username, password=encrypt_password(password))
+    session.add(account)
+    session.commit()
+    return account
