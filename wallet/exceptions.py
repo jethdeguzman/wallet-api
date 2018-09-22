@@ -14,3 +14,9 @@ class ValidationError(Exception):
     def __str__(self):
         return self.message
 
+class InvalidLoginCredentials(Exception):
+    def __init__(self):
+        self.message = 'Invalid username or password'
+
+    def __str__(self):
+        return self.message

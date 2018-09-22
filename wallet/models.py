@@ -71,3 +71,10 @@ def create_account(session, username=None, password=None):
     session.add(account)
     session.commit()
     return account
+
+def get_account(session, username):
+    account = session.query(Account) \
+        .filter_by(username=username) \
+        .first()
+
+    return account

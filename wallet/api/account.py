@@ -1,7 +1,8 @@
 from .base import BaseRequest
-from ..exceptions import AccountAlreadyExists, ValidationError
-from ..models import create_account
+from ..exceptions import AccountAlreadyExists, ValidationError, InvalidLoginCredentials
+from ..models import create_account, get_account
 from sqlalchemy.exc import IntegrityError
+from ..utils import verify_password, generate_session_token
 
 class CreateAccountRequest(BaseRequest):
     def __init__(self, **kwargs):
@@ -29,3 +30,17 @@ class CreateAccountRequest(BaseRequest):
         
         finally:
             self.db_session.close()
+
+class LogInAccountRequest(BaseRequest):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.username = kwargs.get('username')
+        self.password = kwargs.get('password')
+
+    def process(self):
+        account = get_account(self.db_session, self.username)
+
+        if not account or not verify_password(self.password, account.password):
+            raise InvalidLoginCredentials()
+
+        return {'session_token': generate_session_token(account.uuid)}
