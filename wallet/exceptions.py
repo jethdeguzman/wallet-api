@@ -20,3 +20,11 @@ class InvalidLoginCredentials(Exception):
 
     def __str__(self):
         return self.message
+
+class RecordNotFound(Exception):
+    def __init__(self, id):
+        self.id = id
+        self.message = 'Record %s not found' % (self.id)
+
+    def __str__(self):
+        return self.message
